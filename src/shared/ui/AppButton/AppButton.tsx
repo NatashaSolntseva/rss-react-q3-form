@@ -16,7 +16,11 @@ export const AppButton = ({
       type="button"
       onClick={onClick}
       disabled={disabled}
-      className={`cursor-pointer rounded bg-slate-600 px-4 py-2 text-white hover:bg-slate-700 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`cursor-pointer rounded-xl bg-gradient-to-r from-indigo-500/80 to-fuchsia-500/80 
+                  px-5 py-2 font-semibold text-white shadow-md backdrop-blur-sm 
+                  transition-all duration-200 hover:from-indigo-500 hover:to-fuchsia-500 
+                  hover:shadow-lg active:scale-95 
+                  disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
     >
       {text}
     </button>
