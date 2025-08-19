@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+
+import type { RootState } from '@/app/store/store';
+
 import { AppButton, Modal } from '@/shared/ui';
 import { ControlledForm } from '@/features';
+import { InfoCard } from '@/widgets';
 
 export const Home = () => {
   const [form, setForm] = useState<'uncontrolled' | 'rhf' | null>(null);
+  const entries = useSelector((s: RootState) => s.forms.entries);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-10 text-white">
@@ -20,6 +26,19 @@ export const Home = () => {
         <AppButton text="Open RHF Form" onClick={() => setForm('rhf')} />
       </div>
 
+      <h2 className="mt-10 text-2xl font-semibold">Submitted profiles</h2>
+      {entries.length === 0 ? (
+        <p className="mt-2 text-white/70">
+          No data yet — submit a form to see it here.
+        </p>
+      ) : (
+        <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {entries.map((e) => (
+            <InfoCard key={e.id} entry={e} />
+          ))}
+        </div>
+      )}
+
       <Modal
         open={form !== null}
         onClose={() => setForm(null)}
@@ -31,7 +50,7 @@ export const Home = () => {
           {form === 'uncontrolled' ? (
             <p>Uncontrolled form placeholder (validate on submit)…</p>
           ) : (
-            <ControlledForm />
+            <ControlledForm onSuccess={() => setForm(null)} />
           )}
           <div className="text-sm text-white/60">
             Press <kbd className="rounded bg-white/10 px-1">Esc</kbd> to close

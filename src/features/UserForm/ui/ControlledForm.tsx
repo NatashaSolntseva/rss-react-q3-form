@@ -1,73 +1,22 @@
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import { AppButton } from '@/shared/ui';
-import type { Gender } from '../model/types';
+
 import { useState } from 'react';
 import { COUNTRIES } from '@/shared/constants/countries';
+import { useDispatch } from 'react-redux';
+import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
+import { passwordChecks } from '@/shared/utils/passwordCheck';
+import { fileToBase64 } from '@/shared/utils/fileToBase64';
+import { addEntry } from '../model/formsSlice';
 
-const passwordChecks = {
-  number: /\d/,
-  upper: /[A-Z]/,
-  lower: /[a-z]/,
-  special: /[^A-Za-z0-9]/,
+type ControlledFormProps = {
+  onSuccess?: () => void;
 };
 
-export const ControlledForm = () => {
-  const schema = yup
-    .object({
-      name: yup
-        .string()
-        .required('Please enter your name')
-        .matches(/^[A-Z].*$/, 'Name should start with a capital letter'),
-      age: yup
-        .number()
-        .typeError('Age should be a number')
-        .required('Please tell us your age')
-        .min(0, 'Age cannot be negative'),
-      email: yup
-        .string()
-        .required('Please enter your email')
-        .email('That doesn’t look like a valid email'),
-      gender: yup.string<Gender>().required('Please select your gender'),
-
-      password: yup
-        .string()
-        .required('Please create a password')
-        .matches(passwordChecks.number, 'Add at least one number')
-        .matches(passwordChecks.upper, 'Add at least one uppercase letter')
-        .matches(passwordChecks.lower, 'Add at least one lowercase letter')
-        .matches(passwordChecks.special, 'Add at least one special character'),
-      confirmPassword: yup
-        .string()
-        .required('Please confirm your password')
-        .oneOf([yup.ref('password')], 'Passwords should match'),
-
-      acceptTerms: yup
-        .boolean()
-        .required('Please accept the Terms & Conditions to continue')
-        .oneOf([true], 'Please accept the Terms & Conditions to continue'),
-
-      picture: yup
-        .mixed<FileList>()
-        .required()
-        .test(
-          'fileRequired',
-          'Please upload a picture',
-          (v) => !!v && v.length > 0
-        )
-        .test('fileSize', 'File size should be less than 2MB', (v) =>
-          !v || !v[0] ? true : v[0].size <= 2 * 1024 * 1024
-        )
-        .test('fileType', 'Only PNG or JPEG allowed', (v) =>
-          !v || !v[0] ? true : ['image/png', 'image/jpeg'].includes(v[0].type)
-        ),
-      country: yup.string().required('Please choose your country'),
-    })
-    .required();
-
-  type TFormFieldsValues = yup.InferType<typeof schema>;
+export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -75,6 +24,7 @@ export const ControlledForm = () => {
     watch,
     setValue,
     formState: { errors, isSubmitting, isValid },
+    reset,
   } = useForm<TFormFieldsValues>({
     resolver: yupResolver(schema),
     mode: 'onChange',
@@ -100,16 +50,27 @@ export const ControlledForm = () => {
 
   const [showCountries, setShowCountries] = useState(false);
 
-  const submit = handleSubmit((data) => {
-    if (data.picture && data.picture[0]) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64 = reader.result;
-        console.log('Base64 image:', base64);
-      };
-      reader.readAsDataURL(data.picture[0]);
-    }
-    console.log('RHF submit:', data);
+  const submit = handleSubmit(async (data) => {
+    const base64 = data.picture?.[0]
+      ? await fileToBase64(data.picture[0])
+      : undefined;
+
+    dispatch(
+      addEntry({
+        id: crypto.randomUUID(),
+        name: data.name,
+        age: Number(data.age),
+        email: data.email,
+        gender: data.gender,
+        country: data.country,
+        pictureBase64: base64,
+        createdAt: Date.now(),
+        source: 'rhf',
+      })
+    );
+
+    reset();
+    onSuccess?.();
   });
 
   return (
