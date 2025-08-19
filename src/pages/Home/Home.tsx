@@ -4,7 +4,7 @@ import { useSelector } from 'react-redux';
 import type { RootState } from '@/app/store/store';
 
 import { AppButton, Modal } from '@/shared/ui';
-import { ControlledForm } from '@/features';
+import { ControlledForm, UncontrolledForm } from '@/features';
 import { InfoCard } from '@/widgets';
 
 export const Home = () => {
@@ -48,7 +48,7 @@ export const Home = () => {
       >
         <div className="space-y-3 text-white/90">
           {form === 'uncontrolled' ? (
-            <p>Uncontrolled form placeholder (validate on submit)…</p>
+            <UncontrolledForm onSuccess={() => setForm(null)} />
           ) : (
             <ControlledForm onSuccess={() => setForm(null)} />
           )}

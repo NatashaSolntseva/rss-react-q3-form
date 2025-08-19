@@ -1,6 +1,7 @@
 interface AppButtonProps {
-  onClick: () => void;
+  onClick?: () => void;
   text: string;
+  type?: 'button' | 'submit' | 'reset';
   disabled?: boolean;
   className?: string;
 }
@@ -8,12 +9,13 @@ interface AppButtonProps {
 export const AppButton = ({
   onClick,
   text,
+  type = 'button',
   disabled = false,
   className = '',
 }: AppButtonProps) => {
   return (
     <button
-      type="button"
+      type={type}
       onClick={onClick}
       disabled={disabled}
       className={`cursor-pointer rounded-xl bg-gradient-to-r from-indigo-500/80 to-fuchsia-500/80 
