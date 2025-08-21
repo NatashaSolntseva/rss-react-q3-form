@@ -49,4 +49,4 @@ export const FormCheckbox = forwardRef<HTMLInputElement, TermsCheckboxProps>(
   }
 );
 
-FormCheckbox.displayName = 'TermsCheckbox';
+FormCheckbox.displayName = 'FormCheckbox';

@@ -1,9 +1,11 @@
 import { useDispatch } from 'react-redux';
-import { addEntry } from '../model/formsSlice';
 import { useState, type FormEvent, useRef } from 'react';
-import { AppButton } from '@/shared/ui';
+
+import { addEntry } from '../model/formsSlice';
+
+import { AppButton, FormCheckbox, RadioGroup } from '@/shared/ui';
+
 import { COUNTRIES } from '@/shared/constants/countries';
-import { FormCheckbox } from '../../../shared/ui/FormCheckbox/FormCheckbox';
 
 type UncontrolledFormProps = { onSuccess?: () => void };
 
@@ -271,46 +273,14 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
         </div>
       </div>
 
-      {/* Gender (radio) */}
-      <div role="group" aria-labelledby="gender-label">
-        <span id="gender-label" className="mb-1 block text-sm text-white/80">
-          Gender
-        </span>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-2 text-white/85">
-            <input
-              ref={genderFirstRef}
-              type="radio"
-              name="gender"
-              value="female"
-              className="h-4 w-4 accent-fuchsia-500"
-            />
-            Female
-          </label>
-          <label className="flex items-center gap-2 text-white/85">
-            <input
-              type="radio"
-              name="gender"
-              value="male"
-              className="h-4 w-4 accent-fuchsia-500"
-            />
-            Male
-          </label>
-          <label className="flex items-center gap-2 text-white/85">
-            <input
-              type="radio"
-              name="gender"
-              value="other"
-              className="h-4 w-4 accent-fuchsia-500"
-              defaultChecked
-            />
-            Other
-          </label>
-        </div>
-        <div className="mt-1 min-h-[20px] text-sm">
-          {genderError && <p className="text-red-400">{genderError}</p>}
-        </div>
-      </div>
+      <RadioGroup
+        idBase="gender"
+        label="Gender"
+        name="gender"
+        defaultValue="other"
+        firstRef={genderFirstRef}
+        error={genderError}
+      />
 
       {/* Country (custom autocomplete) */}
       <div className="relative">

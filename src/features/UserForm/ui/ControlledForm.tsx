@@ -1,16 +1,16 @@
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-
-import { AppButton } from '@/shared/ui';
-
-import { useState } from 'react';
-import { COUNTRIES } from '@/shared/constants/countries';
 import { useDispatch } from 'react-redux';
+
 import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
+import { addEntry } from '../model/formsSlice';
 import { passwordChecks } from '@/shared/utils/passwordCheck';
 import { fileToBase64 } from '@/shared/utils/fileToBase64';
-import { addEntry } from '../model/formsSlice';
-import { FormCheckbox } from '../../../shared/ui/FormCheckbox/FormCheckbox';
+
+import { AppButton, FormCheckbox, RadioGroup } from '@/shared/ui';
+
+import { COUNTRIES } from '@/shared/constants/countries';
 
 type ControlledFormProps = {
   onSuccess?: () => void;
@@ -124,43 +124,12 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
         </div>
       </div>
 
-      <div>
-        <span className="mb-1 block text-sm text-white/80">Gender</span>
-        <div className="flex gap-4">
-          <label className="flex items-center gap-1 text-white/80">
-            <input
-              type="radio"
-              value="female"
-              {...register('gender')}
-              className="h-4 w-4 accent-fuchsia-500"
-            />
-            Female
-          </label>
-          <label className="flex items-center gap-1 text-white/80">
-            <input
-              type="radio"
-              value="male"
-              {...register('gender')}
-              className="h-4 w-4 accent-fuchsia-500"
-            />
-            Male
-          </label>
-          <label className="flex items-center gap-1 text-white/80">
-            <input
-              type="radio"
-              value="other"
-              {...register('gender')}
-              className="h-4 w-4 accent-fuchsia-500"
-            />
-            Other
-          </label>
-        </div>
-        <div className="mt-1 min-h-[20px] text-sm">
-          {errors.gender && (
-            <p className="text-red-400">{errors.gender.message}</p>
-          )}
-        </div>
-      </div>
+      <RadioGroup
+        idBase="gender"
+        label="Gender"
+        register={register('gender')}
+        error={errors.gender?.message ?? null}
+      />
 
       <div className="relative">
         <label htmlFor="country" className="mb-1 block text-sm text-white/80">
