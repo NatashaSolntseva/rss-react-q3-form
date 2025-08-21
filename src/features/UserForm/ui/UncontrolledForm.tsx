@@ -3,6 +3,7 @@ import { addEntry } from '../model/formsSlice';
 import { useState, type FormEvent, useRef } from 'react';
 import { AppButton } from '@/shared/ui';
 import { COUNTRIES } from '@/shared/constants/countries';
+import { FormCheckbox } from '../../../shared/ui/FormCheckbox/FormCheckbox';
 
 type UncontrolledFormProps = { onSuccess?: () => void };
 
@@ -449,23 +450,13 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
         </div>
       </div>
 
-      {/* Accept terms */}
-      <div className="flex items-center gap-2">
-        <input
-          ref={termsRef}
-          id="acceptTerms"
-          name="acceptTerms"
-          type="checkbox"
-          className="h-4 w-4 rounded border-white/30 bg-white/10 accent-fuchsia-500"
-          aria-invalid={!!termsError}
-        />
-        <label htmlFor="acceptTerms" className="text-sm text-white/80">
-          I accept the Terms & Conditions
-        </label>
-      </div>
-      <div className="mt-1 min-h-[20px] text-sm">
-        {termsError && <p className="text-red-400">{termsError}</p>}
-      </div>
+      <FormCheckbox
+        id="acceptTerms"
+        name="acceptTerms"
+        label="I accept the Terms & Conditions"
+        error={termsError}
+        ref={termsRef}
+      />
 
       <div className="pt-1">
         <AppButton type="submit" text="Submit" />

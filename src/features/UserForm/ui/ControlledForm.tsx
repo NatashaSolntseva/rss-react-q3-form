@@ -10,6 +10,7 @@ import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
 import { passwordChecks } from '@/shared/utils/passwordCheck';
 import { fileToBase64 } from '@/shared/utils/fileToBase64';
 import { addEntry } from '../model/formsSlice';
+import { FormCheckbox } from '../../../shared/ui/FormCheckbox/FormCheckbox';
 
 type ControlledFormProps = {
   onSuccess?: () => void;
@@ -303,22 +304,12 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2">
-        <input
-          id="acceptTerms"
-          type="checkbox"
-          {...register('acceptTerms')}
-          className="h-4 w-4 rounded border-white/30 bg-white/10 accent-fuchsia-500"
-        />
-        <label htmlFor="acceptTerms" className="text-sm text-white/80">
-          I accept the Terms & Conditions
-        </label>
-      </div>
-      <div className="mt-1 min-h-[20px] text-sm">
-        {errors.acceptTerms && (
-          <p className="text-red-400">{errors.acceptTerms.message}</p>
-        )}
-      </div>
+      <FormCheckbox
+        id="acceptTerms"
+        label="I accept the Terms & Conditions"
+        error={errors.acceptTerms?.message ?? null}
+        register={register('acceptTerms')}
+      />
 
       <div className="pt-4">
         <AppButton
