@@ -8,7 +8,7 @@ import { addEntry } from '../model/formsSlice';
 import { passwordChecks } from '@/shared/utils/passwordCheck';
 import { fileToBase64 } from '@/shared/utils/fileToBase64';
 
-import { AppButton, FormCheckbox, RadioGroup } from '@/shared/ui';
+import { AppButton, FormCheckbox, FormInput, RadioGroup } from '@/shared/ui';
 
 import { COUNTRIES } from '@/shared/constants/countries';
 
@@ -76,54 +76,29 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
 
   return (
     <form onSubmit={submit} className="space-y-1 text-white">
-      <div>
-        <label htmlFor="name" className="mb-1 block text-sm text-white/80">
-          Name
-        </label>
-        <input
-          id="name"
-          type="text"
-          placeholder="John"
-          {...register('name')}
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {errors.name && <p className="text-red-400">{errors.name.message}</p>}
-        </div>
-      </div>
-      <div>
-        <label htmlFor="name" className="mb-1 block text-sm text-white/80">
-          Age
-        </label>
-        <input
-          id="age"
-          type="text"
-          placeholder="18"
-          {...register('age')}
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {errors.age && <p className="text-red-400">{errors.age.message}</p>}
-        </div>
-      </div>
-      <div>
-        <label htmlFor="name" className="mb-1 block text-sm text-white/80">
-          E-mail
-        </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="test@test.com"
-          {...register('email')}
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {errors.email && (
-            <p className="text-red-400">{errors.email.message}</p>
-          )}
-        </div>
-      </div>
-
+      <FormInput
+        id="name"
+        label="Name"
+        placeholder="John"
+        register={register('name')}
+        error={errors.name?.message ?? null}
+      />
+      <FormInput
+        id="age"
+        type="number"
+        label="Age"
+        placeholder="18"
+        register={register('age')}
+        error={errors.age?.message ?? null}
+      />
+      <FormInput
+        id="email"
+        type="email"
+        label="E-mail"
+        placeholder="test@test.com"
+        register={register('email')}
+        error={errors.email?.message ?? null}
+      />
       <RadioGroup
         idBase="gender"
         label="Gender"

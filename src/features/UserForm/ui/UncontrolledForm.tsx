@@ -3,7 +3,7 @@ import { useState, type FormEvent, useRef } from 'react';
 
 import { addEntry } from '../model/formsSlice';
 
-import { AppButton, FormCheckbox, RadioGroup } from '@/shared/ui';
+import { AppButton, FormCheckbox, FormInput, RadioGroup } from '@/shared/ui';
 
 import { COUNTRIES } from '@/shared/constants/countries';
 
@@ -214,65 +214,32 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 text-white" noValidate>
-      {/* Name */}
-      <div>
-        <label htmlFor="name" className="block text-sm text-white/80">
-          Name
-        </label>
-        <input
-          ref={nameRef}
-          type="text"
-          id="name"
-          name="name"
-          placeholder="John"
-          aria-invalid={!!nameError}
-          className="mt-1 w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {nameError && <p className="text-red-400">{nameError}</p>}
-        </div>
-      </div>
-
-      {/* Age */}
-      <div>
-        <label htmlFor="age" className="block text-sm text-white/80">
-          Age
-        </label>
-        <input
-          ref={ageRef}
-          type="number"
-          id="age"
-          name="age"
-          placeholder="25"
-          aria-invalid={!!ageError}
-          className="mt-1 w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50
-                     appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none
-                     [-moz-appearance:textfield]"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {ageError && <p className="text-red-400">{ageError}</p>}
-        </div>
-      </div>
-
-      {/* Email */}
-      <div>
-        <label htmlFor="email" className="block text-sm text-white/80">
-          Email
-        </label>
-        <input
-          ref={emailRef}
-          type="email"
-          id="email"
-          name="email"
-          placeholder="john@example.com"
-          aria-invalid={!!emailError}
-          className="mt-1 w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {emailError && <p className="text-red-400">{emailError}</p>}
-        </div>
-      </div>
-
+      <FormInput
+        id="name"
+        label="Name"
+        name="name"
+        placeholder="John"
+        ref={nameRef}
+        error={nameError}
+      />
+      <FormInput
+        id="age"
+        type="number"
+        label="Age"
+        name="age"
+        placeholder="25"
+        ref={ageRef}
+        error={ageError}
+      />
+      <FormInput
+        id="email"
+        type="email"
+        label="Email"
+        name="email"
+        placeholder="john@example.com"
+        ref={emailRef}
+        error={emailError}
+      />
       <RadioGroup
         idBase="gender"
         label="Gender"
