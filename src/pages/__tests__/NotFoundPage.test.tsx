@@ -11,11 +11,11 @@ describe('NotFoundPage', () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText('404')).toBeInTheDocument();
-
     expect(
-      screen.getByRole('heading', { name: /oops! page not found/i })
+      screen.getByRole('heading', { level: 1, name: '404' })
     ).toBeInTheDocument();
+
+    expect(screen.getByText(/Oops! Page not found/i)).toBeInTheDocument();
 
     expect(
       screen.getByText(/The page you’re looking for doesn’t exist/i)
