@@ -3,9 +3,15 @@ import { useState, type FormEvent, useRef } from 'react';
 
 import { addEntry } from '../model/formsSlice';
 
-import { AppButton, FormCheckbox, FormInput, RadioGroup } from '@/shared/ui';
-
-import { COUNTRIES } from '@/shared/constants/countries';
+import {
+  AppButton,
+  FormCheckbox,
+  FormInput,
+  RadioGroup,
+  AutocompleteInput,
+  FileInput,
+  PasswordInput,
+} from '@/shared/ui';
 
 type UncontrolledFormProps = { onSuccess?: () => void };
 
@@ -35,7 +41,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
   const termsRef = useRef<HTMLInputElement | null>(null);
 
   const [country, setCountry] = useState('');
-  const [showCountries, setShowCountries] = useState(false);
 
   const [strength, setStrength] = useState({
     number: false,
@@ -43,10 +48,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
     lower: false,
     special: false,
   });
-
-  const filtered = COUNTRIES.filter((c) =>
-    c.toLowerCase().includes(country.toLowerCase().trim())
-  ).slice(0, 10);
 
   const handlePasswordChange = (val: string) => {
     setStrength({
@@ -213,7 +214,7 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 text-white" noValidate>
+    <form onSubmit={handleSubmit} className="space-y-1 text-white" noValidate>
       <FormInput
         id="name"
         label="Name"
@@ -248,145 +249,31 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
         firstRef={genderFirstRef}
         error={genderError}
       />
-
-      {/* Country (custom autocomplete) */}
-      <div className="relative">
-        <label htmlFor="country" className="mb-1 block text-sm text-white/80">
-          Country
-        </label>
-
-        <input
-          ref={countryInputRef}
-          id="country"
-          type="text"
-          placeholder="Start typing…"
-          value={country}
-          onChange={(e) => {
-            setCountry(e.target.value);
-            setShowCountries(true);
-          }}
-          onFocus={(e) => {
-            const val = (e.target as HTMLInputElement).value;
-            setShowCountries(!!val);
-          }}
-          onBlur={() => {
-            setTimeout(() => setShowCountries(false), 120);
-          }}
-          autoComplete="off"
-          aria-invalid={!!countryError}
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15 placeholder:text-white/50"
-        />
-
-        {showCountries && country.trim().length > 0 && (
-          <ul className="absolute z-10 mt-1 max-h-48 w-full overflow-auto rounded-xl border border-white/15 bg-slate-900/95 p-1 shadow-xl backdrop-blur scrollbar-thin">
-            {filtered.length > 0 ? (
-              filtered.map((c) => (
-                <li
-                  key={c}
-                  className="cursor-pointer rounded-lg px-3 py-2 text-sm text-white/90 hover:bg-white/10"
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setCountry(c);
-                    setCountryError(null);
-                    setShowCountries(false);
-                  }}
-                >
-                  {c}
-                </li>
-              ))
-            ) : (
-              <li className="px-3 py-2 text-sm text-white/60">No matches</li>
-            )}
-          </ul>
-        )}
-
-        <div className="mt-1 min-h-[20px] text-sm">
-          {countryError && <p className="text-red-400">{countryError}</p>}
-        </div>
-      </div>
-
-      {/* Password */}
-      <div>
-        <label htmlFor="password" className="mb-1 block text-sm text-white/80">
-          Password
-        </label>
-        <input
-          ref={passwordRef}
-          id="password"
-          name="password"
-          type="password"
-          onChange={(e) => handlePasswordChange(e.target.value)}
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15"
-        />
-
-        <ul className="mt-2 flex flex-wrap gap-2 text-xs text-white/90">
-          <li
-            className={`rounded px-2 py-1 ${strength.number ? 'bg-emerald-600/30' : 'bg-white/10'}`}
-          >
-            1 number
-          </li>
-          <li
-            className={`rounded px-2 py-1 ${strength.upper ? 'bg-emerald-600/30' : 'bg-white/10'}`}
-          >
-            1 uppercase
-          </li>
-          <li
-            className={`rounded px-2 py-1 ${strength.lower ? 'bg-emerald-600/30' : 'bg-white/10'}`}
-          >
-            1 lowercase
-          </li>
-          <li
-            className={`rounded px-2 py-1 ${strength.special ? 'bg-emerald-600/30' : 'bg-white/10'}`}
-          >
-            1 special
-          </li>
-        </ul>
-
-        <div className="mt-1 min-h-[20px] text-sm">
-          {passwordError && <p className="text-red-400">{passwordError}</p>}
-        </div>
-      </div>
-
-      {/* Confirm password */}
-      <div>
-        <label
-          htmlFor="confirmPassword"
-          className="mb-1 block text-sm text-white/80"
-        >
-          Confirm password
-        </label>
-        <input
-          ref={confirmPasswordRef}
-          id="confirmPassword"
-          name="confirmPassword"
-          type="password"
-          className="w-full rounded-xl bg-white/10 px-3 py-2 outline-none ring-1 ring-white/15"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {confirmPasswordError && (
-            <p className="text-red-400">{confirmPasswordError}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Picture upload */}
-      <div>
-        <label htmlFor="picture" className="mb-1 block text-sm text-white/80">
-          Upload your picture
-        </label>
-        <input
-          ref={pictureRef}
-          id="picture"
-          name="picture"
-          type="file"
-          accept="image/png, image/jpeg"
-          className="w-full text-sm text-white/80"
-        />
-        <div className="mt-1 min-h-[20px] text-sm">
-          {pictureError && <p className="text-red-400">{pictureError}</p>}
-        </div>
-      </div>
-
+      <AutocompleteInput
+        value={country}
+        onChange={setCountry}
+        error={countryError}
+      />
+      <PasswordInput
+        id="password"
+        label="Password"
+        mode="raw"
+        name="password"
+        inputRef={passwordRef}
+        onChange={handlePasswordChange}
+        error={passwordError}
+        showStrength
+        strength={strength}
+      />
+      <PasswordInput
+        id="confirmPassword"
+        label="Confirm password"
+        mode="raw"
+        name="confirmPassword"
+        inputRef={confirmPasswordRef}
+        error={confirmPasswordError}
+      />
+      <FileInput mode="raw" name="picture" error={pictureError} />
       <FormCheckbox
         id="acceptTerms"
         name="acceptTerms"

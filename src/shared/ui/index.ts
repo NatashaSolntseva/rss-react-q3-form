@@ -4,3 +4,6 @@ export { Modal } from './Modal/Modal';
 export { RadioGroup } from './RadioGroup/RadioGroup';
 export { FormCheckbox } from './FormCheckbox/FormCheckbox';
 export { FormInput } from './FormInput/FormInput';
+export { AutocompleteInput } from './AutocompleteInput/AutocompleteInput';
+export { FileInput } from './FileInput/FileInput';
+export { PasswordInput } from './PasswordInput/PasswordInput';
