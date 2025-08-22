@@ -19,6 +19,7 @@
     "moduleDetection": "force",
     "noEmit": true,
     "jsx": "react-jsx",
+    "types": ["node"],
 
     /* Linting */
     "strict": true,
