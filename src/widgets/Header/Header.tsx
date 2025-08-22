@@ -5,7 +5,11 @@ export const Header = () => {
     <header className="sticky top-0 z-20 w-full border-b border-white/10 bg-gradient-to-r from-indigo-600/30 to-fuchsia-600/30 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-xl bg-white/20" aria-hidden />
+          <div
+            className="h-8 w-8 rounded-xl bg-white/20"
+            aria-hidden
+            data-testid="logo"
+          />
           <span className="text-lg font-bold text-white tracking-wide">
             Formify
           </span>
