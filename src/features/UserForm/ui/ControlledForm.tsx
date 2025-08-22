@@ -4,8 +4,7 @@ import { useDispatch } from 'react-redux';
 
 import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
 import { addEntry } from '../model/formsSlice';
-import { passwordChecks } from '@/shared/utils/passwordCheck';
-import { fileToBase64 } from '@/shared/utils/fileToBase64';
+import { passwordChecks, fileToBase64 } from '@/shared/utils';
 
 import {
   AppButton,

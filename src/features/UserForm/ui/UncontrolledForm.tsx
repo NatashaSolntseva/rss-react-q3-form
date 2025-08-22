@@ -12,6 +12,7 @@ import {
   FileInput,
   PasswordInput,
 } from '@/shared/ui';
+import { passwordChecks, fileToBase64 } from '@/shared/utils';
 
 type UncontrolledFormProps = { onSuccess?: () => void };
 
@@ -51,10 +52,10 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
 
   const handlePasswordChange = (val: string) => {
     setStrength({
-      number: /\d/.test(val),
-      upper: /[A-Z]/.test(val),
-      lower: /[a-z]/.test(val),
-      special: /[^A-Za-z0-9]/.test(val),
+      number: passwordChecks.number.test(val),
+      upper: passwordChecks.upper.test(val),
+      lower: passwordChecks.lower.test(val),
+      special: passwordChecks.special.test(val),
     });
   };
 
@@ -177,19 +178,14 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
     if (hasError) return;
 
     let pictureBase64: string | undefined;
-    try {
-      pictureBase64 = file
-        ? await new Promise<string>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = () => resolve(String(reader.result));
-            reader.onerror = reject;
-            reader.readAsDataURL(file);
-          })
-        : undefined;
-    } catch {
-      setPictureError('Failed to read the image, please try another file');
-      pictureRef.current?.focus();
-      return;
+    if (file) {
+      try {
+        pictureBase64 = await fileToBase64(file);
+      } catch {
+        setPictureError('Failed to read the image, please try another file');
+        pictureRef.current?.focus();
+        return;
+      }
     }
 
     dispatch(
