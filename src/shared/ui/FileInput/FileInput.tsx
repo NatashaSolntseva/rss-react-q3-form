@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import type { Ref } from 'react';
 import type { ChangeEvent } from 'react';
 import type { UseFormRegisterReturn } from 'react-hook-form';
 
@@ -19,6 +20,7 @@ type RhfMode = {
 type RawMode = {
   mode: 'raw';
   name: string;
+  inputRef?: Ref<HTMLInputElement>;
   onChange?: (files: FileList | null) => void;
   error?: string | null;
 };
@@ -74,6 +76,7 @@ export const FileInput = ({
           type="file"
           accept={accept}
           className="w-full text-sm text-white/80 file:mr-4 file:rounded-lg file:border-0 file:bg-white/10 file:px-3 file:py-1.5 file:text-white file:hover:bg-white/20"
+          ref={modeProps.inputRef}
           onChange={handleChange}
           aria-invalid={!!errorText}
         />

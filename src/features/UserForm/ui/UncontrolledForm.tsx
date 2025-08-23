@@ -75,7 +75,7 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       | 'male'
       | 'other';
     const accepted = formData.get('acceptTerms') === 'on';
-    const file = formData.get('picture') as File | null;
+    const file = pictureRef.current?.files?.[0];
     const age = Number(ageRaw);
 
     let hasError = false;
@@ -269,7 +269,12 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
         inputRef={confirmPasswordRef}
         error={confirmPasswordError}
       />
-      <FileInput mode="raw" name="picture" error={pictureError} />
+      <FileInput
+        mode="raw"
+        name="picture"
+        inputRef={pictureRef}
+        error={pictureError}
+      />
       <FormCheckbox
         id="acceptTerms"
         name="acceptTerms"
