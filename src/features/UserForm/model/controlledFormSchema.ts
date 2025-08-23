@@ -8,12 +8,15 @@ export const schema = yup
     name: yup
       .string()
       .required('Please enter your name')
-      .matches(/^[A-Z].*$/, 'Name should start with a capital letter'),
+      .matches(
+        /^[A-ZА-Я][a-zа-яA-ZА-Я]*$/,
+        'Name should start with a capital letter (Latin or Cyrillic) and contain only letters'
+      ),
     age: yup
       .number()
       .typeError('Age should be a number')
       .required('Please tell us your age')
-      .min(0, 'Age cannot be negative'),
+      .min(1, 'Age cannot be negative or zero'),
     email: yup
       .string()
       .required('Please enter your email')

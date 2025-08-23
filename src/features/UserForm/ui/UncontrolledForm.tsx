@@ -93,14 +93,21 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
 
     // age
     if (!ageRaw) {
+      console.log(ageRaw);
       setAgeError('Please enter your age');
       if (!hasError) ageRef.current?.focus();
       hasError = true;
-    } else if (isNaN(age) || age < 1 || age > 120) {
-      setAgeError('Age must be a number between 1 and 120');
+    } else if (isNaN(Number(ageRaw))) {
+      setAgeError('Age should be a number');
       if (!hasError) ageRef.current?.focus();
       hasError = true;
-    } else setAgeError(null);
+    } else if (age < 1 || age > 120) {
+      setAgeError('Age must be between 1 and 120');
+      if (!hasError) ageRef.current?.focus();
+      hasError = true;
+    } else {
+      setAgeError(null);
+    }
 
     // email
     if (!email) {
@@ -221,7 +228,7 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       />
       <FormInput
         id="age"
-        type="number"
+        type="text"
         label="Age"
         name="age"
         placeholder="25"

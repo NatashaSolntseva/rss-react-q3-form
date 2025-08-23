@@ -44,10 +44,15 @@ export const PasswordInput = ({
       : (modeProps.error ?? null);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const sanitized = e.target.value.replace(/[А-Яа-яЁё]/g, '');
+    if (sanitized !== e.target.value) {
+      e.target.value = sanitized;
+    }
+
     if (modeProps.mode === 'rhf') {
       modeProps.register.onChange(e);
     } else {
-      modeProps.onChange?.(e.target.value);
+      modeProps.onChange?.(sanitized);
     }
   };
 

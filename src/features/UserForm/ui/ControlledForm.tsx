@@ -87,7 +87,7 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
       />
       <FormInput
         id="age"
-        type="number"
+        type="text"
         label="Age"
         placeholder="18"
         register={register('age')}
