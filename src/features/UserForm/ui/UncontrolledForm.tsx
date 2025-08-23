@@ -80,7 +80,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
 
     let hasError = false;
 
-    // name
     if (!name) {
       setNameError('Please enter your name');
       nameRef.current?.focus();
@@ -91,7 +90,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       hasError = true;
     } else setNameError(null);
 
-    // age
     if (!ageRaw) {
       console.log(ageRaw);
       setAgeError('Please enter your age');
@@ -109,7 +107,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       setAgeError(null);
     }
 
-    // email
     if (!email) {
       setEmailError('Please enter your email');
       if (!hasError) emailRef.current?.focus();
@@ -120,7 +117,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       hasError = true;
     } else setEmailError(null);
 
-    // password
     if (!password) {
       setPasswordError('Please enter your password');
       if (!hasError) passwordRef.current?.focus();
@@ -131,7 +127,6 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       hasError = true;
     } else setPasswordError(null);
 
-    // confirm password
     if (!confirmPassword) {
       setConfirmPasswordError('Please confirm your password');
       if (!hasError) confirmPasswordRef.current?.focus();
@@ -142,28 +137,24 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       hasError = true;
     } else setConfirmPasswordError(null);
 
-    // gender
     if (!gender) {
       setGenderError('Please select your gender');
       if (!hasError) genderFirstRef.current?.focus();
       hasError = true;
     } else setGenderError(null);
 
-    // country
     if (!country.trim()) {
       setCountryError('Please choose your country');
       if (!hasError) countryInputRef.current?.focus();
       hasError = true;
     } else setCountryError(null);
 
-    // terms
     if (!accepted) {
       setTermsError('Please accept the Terms & Conditions to continue');
       if (!hasError) termsRef.current?.focus();
       hasError = true;
     } else setTermsError(null);
 
-    // picture
     const validatePicture = (file?: File | null) => {
       if (!file) return { ok: false, msg: 'Please upload a picture' };
       if (file.size > 2 * 1024 * 1024)

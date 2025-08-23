@@ -5,6 +5,7 @@ import { useDispatch } from 'react-redux';
 import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
 import { addEntry } from '../model/formsSlice';
 import { passwordChecks, fileToBase64 } from '@/shared/utils';
+import { getDraft, setDraft, clearDraft } from '@/shared/utils/formDraft';
 
 import {
   AppButton,
@@ -15,6 +16,7 @@ import {
   FileInput,
   PasswordInput,
 } from '@/shared/ui';
+import { useEffect } from 'react';
 
 type ControlledFormProps = {
   onSuccess?: () => void;
@@ -22,6 +24,8 @@ type ControlledFormProps = {
 
 export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
   const dispatch = useDispatch();
+  const DRAFT_KEY = 'draft_rhf';
+  const saved = getDraft<Partial<TFormFieldsValues>>(DRAFT_KEY) ?? {};
 
   const {
     register,
@@ -42,6 +46,7 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
       picture: undefined,
       password: '',
       country: '',
+      ...saved,
     },
   });
 
@@ -52,6 +57,17 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
     lower: passwordChecks.lower.test(pwd),
     special: passwordChecks.special.test(pwd),
   };
+
+  useEffect(() => {
+    const sub = watch((v) => {
+      const draft = { ...v };
+      delete draft.password;
+      delete draft.confirmPassword;
+      delete draft.picture;
+      setDraft(DRAFT_KEY, draft);
+    });
+    return () => sub.unsubscribe();
+  }, [watch]);
 
   const submit = handleSubmit(async (data) => {
     const base64 = data.picture?.[0]
@@ -74,6 +90,7 @@ export const ControlledForm = ({ onSuccess }: ControlledFormProps) => {
 
     reset();
     onSuccess?.();
+    clearDraft(DRAFT_KEY);
   });
 
   return (
