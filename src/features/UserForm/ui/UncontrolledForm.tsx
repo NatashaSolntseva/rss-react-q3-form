@@ -13,6 +13,8 @@ import {
   PasswordInput,
 } from '@/shared/ui';
 import { passwordChecks, fileToBase64 } from '@/shared/utils';
+import { schema, type TFormFieldsValues } from '../model/controlledFormSchema';
+import { ValidationError } from 'yup';
 
 type UncontrolledFormProps = { onSuccess?: () => void };
 
@@ -59,129 +61,105 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
     });
   };
 
+  const focusOrder = [
+    { key: 'name' as const, ref: () => nameRef.current },
+    { key: 'age' as const, ref: () => ageRef.current },
+    { key: 'email' as const, ref: () => emailRef.current },
+    { key: 'gender' as const, ref: () => genderFirstRef.current },
+    { key: 'country' as const, ref: () => countryInputRef.current },
+    { key: 'password' as const, ref: () => passwordRef.current },
+    { key: 'confirmPassword' as const, ref: () => confirmPasswordRef.current },
+    { key: 'picture' as const, ref: () => pictureRef.current },
+    { key: 'acceptTerms' as const, ref: () => termsRef.current },
+  ];
+
+  const clearAllErrors = () => {
+    setNameError(null);
+    setAgeError(null);
+    setEmailError(null);
+    setGenderError(null);
+    setCountryError(null);
+    setPasswordError(null);
+    setConfirmPasswordError(null);
+    setPictureError(null);
+    setTermsError(null);
+  };
+
+  const applyErrors = (
+    errs: Partial<Record<keyof TFormFieldsValues, string>>
+  ) => {
+    setNameError(errs.name ?? null);
+    setAgeError(errs.age ?? null);
+    setEmailError(errs.email ?? null);
+    setGenderError(errs.gender ?? null);
+    setCountryError(errs.country ?? null);
+    setPasswordError(errs.password ?? null);
+    setConfirmPasswordError(errs.confirmPassword ?? null);
+    setPictureError(errs.picture ?? null);
+    setTermsError(errs.acceptTerms ?? null);
+
+    const firstBad = focusOrder.find(({ key }) => errs[key]);
+    firstBad?.ref()?.focus?.();
+  };
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    clearAllErrors();
 
     const formEl = e.currentTarget;
-
     const formData = new FormData(formEl);
-    const name = formData.get('name')?.toString().trim() ?? '';
-    const ageRaw = formData.get('age')?.toString().trim() ?? '';
-    const email = formData.get('email')?.toString().trim() ?? '';
-    const password = formData.get('password')?.toString() ?? '';
-    const confirmPassword = formData.get('confirmPassword')?.toString() ?? '';
-    const gender = (formData.get('gender')?.toString() ?? 'other') as
-      | 'female'
-      | 'male'
-      | 'other';
-    const accepted = formData.get('acceptTerms') === 'on';
-    const file = pictureRef.current?.files?.[0];
-    const age = Number(ageRaw);
 
-    let hasError = false;
+    const name = (formData.get('name') ?? '').toString().trim();
+    const ageRaw = (formData.get('age') ?? '').toString().trim();
+    const email = (formData.get('email') ?? '').toString().trim();
+    const password = (formData.get('password') ?? '').toString();
+    const confirmPassword = (formData.get('confirmPassword') ?? '').toString();
+    const gender = (formData.get('gender') ??
+      'other') as TFormFieldsValues['gender'];
+    const acceptTerms = formData.get('acceptTerms') === 'on';
+    const picture = pictureRef.current
+      ?.files as unknown as TFormFieldsValues['picture'];
+    const countryVal = country;
 
-    if (!name) {
-      setNameError('Please enter your name');
-      nameRef.current?.focus();
-      hasError = true;
-    } else if (!/^[A-Z].*/.test(name)) {
-      setNameError('Name should start with a capital letter');
-      nameRef.current?.focus();
-      hasError = true;
-    } else setNameError(null);
-
-    if (!ageRaw) {
-      console.log(ageRaw);
-      setAgeError('Please enter your age');
-      if (!hasError) ageRef.current?.focus();
-      hasError = true;
-    } else if (isNaN(Number(ageRaw))) {
-      setAgeError('Age should be a number');
-      if (!hasError) ageRef.current?.focus();
-      hasError = true;
-    } else if (age < 1 || age > 120) {
-      setAgeError('Age must be between 1 and 120');
-      if (!hasError) ageRef.current?.focus();
-      hasError = true;
-    } else {
-      setAgeError(null);
-    }
-
-    if (!email) {
-      setEmailError('Please enter your email');
-      if (!hasError) emailRef.current?.focus();
-      hasError = true;
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailError('Please enter a valid email address');
-      if (!hasError) emailRef.current?.focus();
-      hasError = true;
-    } else setEmailError(null);
-
-    if (!password) {
-      setPasswordError('Please enter your password');
-      if (!hasError) passwordRef.current?.focus();
-      hasError = true;
-    } else if (password.length < 6) {
-      setPasswordError('Password must be at least 6 characters');
-      if (!hasError) passwordRef.current?.focus();
-      hasError = true;
-    } else setPasswordError(null);
-
-    if (!confirmPassword) {
-      setConfirmPasswordError('Please confirm your password');
-      if (!hasError) confirmPasswordRef.current?.focus();
-      hasError = true;
-    } else if (confirmPassword !== password) {
-      setConfirmPasswordError('Passwords do not match');
-      if (!hasError) confirmPasswordRef.current?.focus();
-      hasError = true;
-    } else setConfirmPasswordError(null);
-
-    if (!gender) {
-      setGenderError('Please select your gender');
-      if (!hasError) genderFirstRef.current?.focus();
-      hasError = true;
-    } else setGenderError(null);
-
-    if (!country.trim()) {
-      setCountryError('Please choose your country');
-      if (!hasError) countryInputRef.current?.focus();
-      hasError = true;
-    } else setCountryError(null);
-
-    if (!accepted) {
-      setTermsError('Please accept the Terms & Conditions to continue');
-      if (!hasError) termsRef.current?.focus();
-      hasError = true;
-    } else setTermsError(null);
-
-    const validatePicture = (file?: File | null) => {
-      if (!file) return { ok: false, msg: 'Please upload a picture' };
-      if (file.size > 2 * 1024 * 1024)
-        return { ok: false, msg: 'File size should be less than 2MB' };
-      if (!['image/png', 'image/jpeg'].includes(file.type))
-        return { ok: false, msg: 'Only PNG or JPEG allowed' };
-      return { ok: true as const, msg: null as null };
+    const candidate: Partial<TFormFieldsValues> = {
+      name,
+      age: ageRaw as unknown as number,
+      email,
+      gender,
+      country: countryVal,
+      password,
+      confirmPassword,
+      acceptTerms,
+      picture,
     };
 
-    const picCheck = validatePicture(file);
-    if (!picCheck.ok) {
-      setPictureError(picCheck.msg);
-      if (!hasError) pictureRef.current?.focus();
-      hasError = true;
-    } else {
-      setPictureError(null);
+    try {
+      await schema.validate(candidate, { abortEarly: false });
+    } catch (err) {
+      if (err instanceof ValidationError) {
+        const map: Partial<Record<keyof TFormFieldsValues, string>> = {};
+        for (const issue of err.inner) {
+          const path = issue.path as keyof TFormFieldsValues | undefined;
+          if (path && !map[path]) map[path] = issue.message;
+        }
+        applyErrors(map);
+        return;
+      }
+
+      applyErrors({});
+      return;
     }
 
-    if (hasError) return;
+    const f = pictureRef.current?.files?.[0];
 
     let pictureBase64: string | undefined;
-    if (file) {
+    if (f) {
       try {
-        pictureBase64 = await fileToBase64(file);
+        pictureBase64 = await fileToBase64(f);
       } catch {
-        setPictureError('Failed to read the image, please try another file');
-        pictureRef.current?.focus();
+        applyErrors({
+          picture: 'Failed to read the image, please try another file',
+        });
         return;
       }
     }
@@ -190,10 +168,10 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
       addEntry({
         id: crypto.randomUUID(),
         name,
-        age,
+        age: Number(ageRaw),
         email,
         gender,
-        country,
+        country: countryVal,
         pictureBase64,
         createdAt: Date.now(),
         source: 'uncontrolled',
@@ -203,10 +181,8 @@ export const UncontrolledForm = ({ onSuccess }: UncontrolledFormProps) => {
     formEl.reset();
     setCountry('');
     setStrength({ number: false, upper: false, lower: false, special: false });
-
     onSuccess?.();
   };
-
   return (
     <form onSubmit={handleSubmit} className="space-y-1 text-white" noValidate>
       <FormInput
